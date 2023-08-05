@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 @Service
 @Transactional
@@ -23,6 +24,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     public String defaultRole = "ROLE_USER";
+    public int enabledUser = 1;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,28 +34,29 @@ public class UserService {
     public Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
     public void saveUser(User user, Role role) {
         User newUser = userRepository.save(userEncrypted(user));
-        roleRepository.save(customRole(newUser.getId(), role));
+        roleRepository.save(customRole(newUser, role));
     }
 
-    private Role customRole(int userId, Role role) {
-        role.setUser_id(userId);
+    private Role customRole(User user, Role role) {
+        role.setUser(user);
         role.setAuthority(defaultRole); // admin can change the role
-        role.setEnabled(1); // activate with account validation
+        role.setEnabled(enabledUser); // activate with account validation
         return role;
     }
     private User userEncrypted(User user) {
         user.setEmail(user.getEmail());
         user.setName(user.getName());
         user.setPassword(passwordEncoder().encode(user.getPassword()));
-        user.setCreated_at(currentTimestamp);
-        user.setUpdated_at(currentTimestamp);
+        user.setCreatedAt(OffsetDateTime.now());
+        user.setUpdatedAt(OffsetDateTime.now());
         return user;
     }
     public User getUser(Integer id) {
+
         return userRepository.findById(id).get();
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).get(0);
+        return userRepository.findByEmail(email);
     }
 }

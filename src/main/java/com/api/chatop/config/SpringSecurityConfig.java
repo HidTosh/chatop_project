@@ -41,8 +41,8 @@ public class SpringSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        String usersByUsernameQuery = "select email, password, enabled from rental.USERS, rental.ROLES where rental.USERS.id = rental.ROLES.user_id and email = ?;";
-        String authsByUserQuery = "select email, authority from rental.ROLES, rental.USERS where rental.USERS.id = rental.ROLES.user_id and email = ?;";
+        String usersByUsernameQuery = "select email, password, enabled from users, roles where users.id = roles.user_id and email = ?;";
+        String authsByUserQuery = "select email, authority from roles, users where users.id = roles.user_id and email = ?;";
 
         var userDetailsManager = new JdbcUserDetailsManager(dataSource);
         userDetailsManager.setUsersByUsernameQuery(usersByUsernameQuery);
@@ -65,7 +65,7 @@ public class SpringSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/api/auth/register", "/users/", "/users", "/users/add");
+        return (web) -> web.ignoring().requestMatchers("/api/auth/register", "/users/add");
     }
 
     @Bean
