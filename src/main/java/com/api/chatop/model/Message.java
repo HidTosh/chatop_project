@@ -1,51 +1,80 @@
 package com.api.chatop.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import java.time.OffsetDateTime;
 
-import javax.persistence.Table;
-import java.sql.Timestamp;
-
-@Getter
-@Setter
 @Entity
-@Data
-@Table(name = "MESSAGES")
+@Table(name = "messages")
 public class Message {
+    @Id
+    @Column(nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private int id;
-
-    private int rental_id;
-
-    private int user_id;
-
+    @Column(length = 2000)
     private String message;
 
-    private Timestamp created_at;
+    @Column
+    private OffsetDateTime createdAt;
 
-    private Timestamp updated_at;
+    @Column
+    private OffsetDateTime updatedAt;
 
-    public Message() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rental_id")
+    private Rental rental;
 
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Message(int id, int rental_id, int user_id, String message, Timestamp created_at, Timestamp updated_at) {
-        this.id = id;
-        this.rental_id = rental_id;
-        this.user_id = user_id;
-        this.message = message;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
+
+    public void setId(final Integer id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(final String message) {
+        this.message = message;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(final OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(final OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Rental getRental() {
+        return rental;
+    }
+
+    public void setRental(final Rental rental) {
+        this.rental = rental;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(final User user) {
+        this.user = user;
+    }
+
+
 }

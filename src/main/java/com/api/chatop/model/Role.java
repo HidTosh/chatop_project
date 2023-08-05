@@ -2,32 +2,53 @@ package com.api.chatop.model;
 
 import jakarta.persistence.*;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 @Entity
-@Table(name = "ROLES")
+@Table(name = "roles")
 public class Role {
-    private int id;
-    private int user_id;
+    @Id
+    @Column(nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
+    @Column(length = 40)
     private String authority;
 
-    private int enabled;
+    @Column(nullable = false)
+    private Integer enabled;
 
-    public Role() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Integer getId() {
+        return id;
     }
-    public Role(int id, int user_id, String authority, int enabled) {
+
+    public void setId(final Integer id) {
         this.id = id;
-        this.user_id = user_id;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(final String authority) {
         this.authority = authority;
+    }
+
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final Integer enabled) {
         this.enabled = enabled;
     }
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
-        return id;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(final User user) {
+        this.user = user;
     }
 }
