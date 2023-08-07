@@ -1,5 +1,6 @@
 package com.api.chatop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -29,16 +30,18 @@ public class Rental {
     @Column(precision = 12, scale = 2)
     private BigDecimal surface;
 
-    @Column
-    private OffsetDateTime createdAt;
+    @Column(name = "created_at")
+    private OffsetDateTime created_at;
 
-    @Column
-    private OffsetDateTime updatedAt;
+    @Column(name = "updated_at")
+    private OffsetDateTime updated_at;
 
     @OneToMany(mappedBy = "rental")
+    @JsonIgnore
     private Set<Message> rentalMessages;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
@@ -90,20 +93,20 @@ public class Rental {
         this.surface = surface;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
+    public OffsetDateTime getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(final OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(final OffsetDateTime created_at) {
+        this.created_at = created_at;
     }
 
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
+    public OffsetDateTime getUpdated_at() {
+        return updated_at;
     }
 
-    public void setUpdatedAt(final OffsetDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdated_at(final OffsetDateTime updated_at) {
+        this.updated_at = updated_at;
     }
 
     public Set<Message> getRentalMessages() {

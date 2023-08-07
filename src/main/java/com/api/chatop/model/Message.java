@@ -14,11 +14,11 @@ public class Message {
     @Column(length = 2000)
     private String message;
 
-    @Column
-    private OffsetDateTime createdAt;
+    @Column(name = "created_at")
+    private OffsetDateTime created_at;
 
-    @Column
-    private OffsetDateTime updatedAt;
+    @Column(name = "updated_at")
+    private OffsetDateTime updated_at;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rental_id")
@@ -44,20 +44,20 @@ public class Message {
         this.message = message;
     }
 
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
+    public OffsetDateTime getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(final OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(final OffsetDateTime created_at) {
+        this.created_at = created_at;
     }
 
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
+    public OffsetDateTime getUpdated_at() {
+        return updated_at;
     }
 
-    public void setUpdatedAt(final OffsetDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdated_at(final OffsetDateTime updated_at) {
+        this.updated_at = updated_at;
     }
 
     public Rental getRental() {

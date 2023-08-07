@@ -47,8 +47,8 @@ public class UserService {
         user.setEmail(user.getEmail());
         user.setName(user.getName());
         user.setPassword(passwordEncoder().encode(user.getPassword()));
-        user.setCreatedAt(OffsetDateTime.now());
-        user.setUpdatedAt(OffsetDateTime.now());
+        user.setCreated_at(OffsetDateTime.now());
+        user.setUpdated_at(OffsetDateTime.now());
         return user;
     }
     public User getUser(Integer id) {
