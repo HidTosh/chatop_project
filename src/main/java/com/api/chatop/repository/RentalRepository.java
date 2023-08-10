@@ -11,7 +11,6 @@ public interface RentalRepository extends JpaRepository<Rental, Integer> {
     @Query(value = "SELECT * FROM rental.rentals", nativeQuery = true)
     List<RentalProjection> findAllRentals();
 
-
     @Query(value = "SELECT * FROM rental.rentals WHERE id = :selectedID", nativeQuery = true)
     RentalProjection findRentalByID(Integer selectedID);
 
