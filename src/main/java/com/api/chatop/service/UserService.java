@@ -19,44 +19,54 @@ import java.time.OffsetDateTime;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoleRepository roleRepository;
+    public String defaultRole = "ROLE_USER"; // Change role from admin
+    public int enabledUser = 1; // By default new user is enabled
+    public PasswordEncoder passwordEncoder = passwordEncoder();
 
-    public String defaultRole = "ROLE_USER";
-    public int enabledUser = 1;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    public Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-    public void saveUser(User user, Role role) {
-        User newUser = userRepository.save(userEncrypted(user));
-        roleRepository.save(customRole(newUser, role));
+    public boolean saveUser(User user, Role role) {
+        if (getUserByEmail(user.getEmail()) == null) {
+            User newUser = userRepository.save(userEncrypted(user));
+            roleRepository.save(customRole(newUser, role));
+            return true;
+        }
+        return false;
     }
 
     private Role customRole(User user, Role role) {
         role.setUser(user);
-        role.setAuthority(defaultRole); // admin can change the role
-        role.setEnabled(enabledUser); // activate with account validation
+        role.setAuthority(defaultRole);
+        role.setEnabled(enabledUser);
+
         return role;
     }
+
     private User userEncrypted(User user) {
         user.setEmail(user.getEmail());
         user.setName(user.getName());
-        user.setPassword(passwordEncoder().encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated_at(OffsetDateTime.now());
         user.setUpdated_at(OffsetDateTime.now());
+
         return user;
     }
-    public User getUser(Integer id) {
 
-        return userRepository.findById(id).get();
+    public User getUser(Integer id) {
+        if (userRepository.findById(id).isPresent()) {
+            return userRepository.findById(id).get();
+        }
+        return null;
     }
 
     public User getUserByEmail(String email) {
+
         return userRepository.findByEmail(email);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        return new BCryptPasswordEncoder();
     }
 }

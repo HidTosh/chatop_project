@@ -5,12 +5,17 @@ import com.api.chatop.model.User;
 import com.api.chatop.repository.RentalProjection;
 import com.api.chatop.service.RentalService;
 import com.api.chatop.service.UserService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -23,26 +28,34 @@ public class RentalController {
     @Autowired
     RentalService rentalService;
 
-    //Create rental
-    @PostMapping("/add")
-    public void addRental(@RequestBody Rental rental, Authentication authentication) {
+    /* Create rental */
+    @PostMapping("")
+    public void addRental(@RequestParam("picture") MultipartFile file, @RequestParam Map<String, String> rentalData, Authentication authentication) {
         User user = userService.getUserByEmail(authentication.getName());
-        rentalService.saveUpdateRental(rental, user, "new");
+        rentalService.createRental(file, rentalData, user);
     }
 
-    @PutMapping("/update")
-    public void updateRental(@RequestBody Rental rental, Authentication authentication) {
+    /* Update rental */
+    @PutMapping("/{id}")
+    public JSONObject updateRental(@ModelAttribute Rental rental, Authentication authentication) {
         User user = userService.getUserByEmail(authentication.getName());
-        rentalService.saveUpdateRental(rental, user, "update");
+        rentalService.updateRental(rental, user);
+        JSONObject rentalSuccess = new JSONObject();
+        rentalSuccess.put("message",  "Rental updated !");
+
+        return rentalSuccess;
     }
 
-    // Get all rentals
-    @GetMapping("/all")
-    public List<RentalProjection> getAllRentals(){
-        return rentalService.getAllRentals();
+    /* Get all rentals */
+    @GetMapping("")
+    public JSONObject getAllRentals(){
+        JSONObject rentalsData = new JSONObject();
+        rentalsData.put("rentals", rentalService.getAllRentals());
+
+        return rentalsData;
     }
 
-    // get rental by id
+    /*get rental by id */
     @GetMapping("/{id}")
     public ResponseEntity<RentalProjection> get(@PathVariable Integer id) {
         try {

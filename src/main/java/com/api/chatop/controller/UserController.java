@@ -18,11 +18,12 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public void add(@RequestBody User user, Role role) {
+    public boolean add(@RequestBody User user, Role role) {
 
-        userService.saveUser(user, role);
+        return userService.saveUser(user, role);
     }
 
+    /* Get current user */
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public ResponseEntity<User> getName(Authentication authentication) {
         try {
@@ -33,6 +34,7 @@ public class UserController {
         }
     }
 
+    /* Get user by id */
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable Integer id) {
         try {
