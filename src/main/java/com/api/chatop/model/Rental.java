@@ -121,6 +121,10 @@ public class Rental {
         return owner;
     }
 
+    public Integer getOwner_id() {
+        return owner.getId();
+    }
+
     public void setOwner(final User owner) {
         this.owner = owner;
     }
