@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -21,8 +22,8 @@ public class MessageController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/messages")
-    public JSONObject addMessage(
+    @PostMapping("/messages")
+    public Map<String, String> addMessage(
             @RequestBody Map<String, Object> dataMessage,
             Authentication authentication,
             Message message
@@ -30,9 +31,9 @@ public class MessageController {
         User user = userService.getUserByEmail(authentication.getName());
         messageService.saveMessage(dataMessage, user, message);
 
-        JSONObject messageSuccess = new JSONObject();
-        messageSuccess.put("message",  "Message send with success");
+        HashMap<String, String> mapSuccess = new HashMap<>();
+        mapSuccess.put("message",  "Message send with success");
 
-        return messageSuccess;
+        return mapSuccess;
     }
 }

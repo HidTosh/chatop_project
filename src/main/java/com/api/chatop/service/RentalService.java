@@ -1,15 +1,11 @@
 package com.api.chatop.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.api.chatop.model.Rental;
 import com.api.chatop.model.User;
-import com.api.chatop.repository.RentalProjection;
 import com.api.chatop.repository.RentalRepository;
 import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,17 +61,19 @@ public class RentalService {
     }
 
     /* get all rental */
-    public List<RentalProjection> getAllRentals(){
-        List<RentalProjection> rentals = new ArrayList<RentalProjection>();
-        rentalRepository.findAllRentals().forEach(rental -> rentals.add(rental));
+    public List<Rental> getAllRentals(){
+        List<Rental> rentals = new ArrayList<Rental>();
+        rentalRepository.findAll().forEach(rental -> rentals.add(rental));
 
         return rentals;
     }
 
     /* get rental by id */
-    public RentalProjection getRental(Integer id) {
-
-        return rentalRepository.findRentalByID(id);
+    public Rental getRental(Integer id) {
+        if (rentalRepository.findById(id).isPresent()) {
+            return rentalRepository.findById(id).get();
+        }
+        return null;
     }
 
     private File convertMultiPartToFile(MultipartFile file ) throws IOException {

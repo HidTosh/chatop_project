@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 import com.api.chatop.service.UserService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
@@ -33,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public JSONObject login(@RequestBody  Map<String, Object> credentials, HttpServletRequest req) {
+    public Map<String, String> login(@RequestBody  Map<String, Object> credentials, HttpServletRequest req) {
         String login = credentials.containsKey("login") ?
                 (String) credentials.get("login") :
                 (String) credentials.get("email");
@@ -49,8 +50,9 @@ public class AuthController {
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
         String token = tokenService.generateToken(auth);
-        JSONObject jwtObject = new JSONObject();
-        jwtObject.put("token", token);
+
+        HashMap<String, String> jwtObject = new HashMap<>();
+        jwtObject.put("token",  token);
 
 
         return jwtObject;
