@@ -26,11 +26,16 @@ public class RentalController {
     @Autowired
     RentalService rentalService;
 
+    HashMap<String, String> successMessage = new HashMap<>();
+
     /* Create rental */
     @PostMapping("")
-    public void addRental(@RequestParam("picture") MultipartFile file, @RequestParam Map<String, String> rentalData, Authentication authentication) {
+    public Map<String, String> addRental(@RequestParam("picture") MultipartFile file, @RequestParam Map<String, String> rentalData, Authentication authentication) {
         User user = userService.getUserByEmail(authentication.getName());
         rentalService.createRental(file, rentalData, user);
+        successMessage.put("message",  "Rental created !");
+
+        return successMessage;
     }
 
     /* Update rental */
@@ -38,11 +43,19 @@ public class RentalController {
     public Map<String, String> updateRental(@ModelAttribute Rental rental, Authentication authentication) {
         User user = userService.getUserByEmail(authentication.getName());
         rentalService.updateRental(rental, user);
+        successMessage.put("message",  "Rental updated !");
 
-        HashMap<String, String> mapSuccess = new HashMap<>();
-        mapSuccess.put("message",  "Rental updated !");
+        return successMessage;
+    }
 
-        return mapSuccess;
+    /* delete rental */
+    @DeleteMapping("/{id}")
+    public Map<String, String> deleteRental(@PathVariable Integer id, Authentication authentication){
+        User user = userService.getUserByEmail(authentication.getName());
+        rentalService.deleteRental(id, user);
+        successMessage.put("message", "Rental and related Messages are deleted");
+
+        return successMessage;
     }
 
     /* Get all rentals */

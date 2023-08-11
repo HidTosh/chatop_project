@@ -4,15 +4,24 @@ import com.api.chatop.model.User;
 import com.api.chatop.model.Role;
 import com.api.chatop.repository.UserRepository;
 import com.api.chatop.repository.RoleRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Service
 @Transactional
@@ -32,6 +41,19 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    public Authentication userAuthentication(String email, String password, HttpServletRequest req, AuthenticationManager authenticationManager) {
+        UsernamePasswordAuthenticationToken authReq =
+                new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+        HttpSession session = req.getSession(true);
+        session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext);
+
+        return auth;
     }
 
     private Role customRole(User user, Role role) {
