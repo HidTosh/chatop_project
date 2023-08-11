@@ -1,5 +1,6 @@
 package com.api.chatop.service;
 
+import com.api.chatop.dto.UserRegisterDto;
 import com.api.chatop.model.User;
 import com.api.chatop.model.Role;
 import com.api.chatop.repository.UserRepository;
@@ -17,11 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.AuthenticationManager;
-
-import java.sql.Timestamp;
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import java.time.OffsetDateTime;
 
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+
 
 @Service
 @Transactional
@@ -33,17 +33,27 @@ public class UserService {
     public String defaultRole = "ROLE_USER"; // Change role from admin
     public int enabledUser = 1; // By default new user is enabled
     public PasswordEncoder passwordEncoder = passwordEncoder();
+    public Role role = new Role();
 
-    public boolean saveUser(User user, Role role) {
-        if (getUserByEmail(user.getEmail()) == null) {
-            User newUser = userRepository.save(userEncrypted(user));
+    public User user = new User();
+
+    public boolean saveUser(UserRegisterDto userRegisterDto) {
+        if (getUserByEmail(userRegisterDto.getEmail()) == null) {
+            User newUser = userRepository.save(
+                userEncrypted(userRegisterDto)
+            );
             roleRepository.save(customRole(newUser, role));
             return true;
         }
         return false;
     }
 
-    public Authentication userAuthentication(String email, String password, HttpServletRequest req, AuthenticationManager authenticationManager) {
+    public Authentication userAuthentication(
+            String email,
+            String password,
+            HttpServletRequest req,
+            AuthenticationManager authenticationManager
+    ) {
         UsernamePasswordAuthenticationToken authReq =
                 new UsernamePasswordAuthenticationToken(email, password);
         Authentication auth = authenticationManager.authenticate(authReq);
@@ -52,7 +62,6 @@ public class UserService {
         securityContext.setAuthentication(auth);
         HttpSession session = req.getSession(true);
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext);
-
         return auth;
     }
 
@@ -60,17 +69,15 @@ public class UserService {
         role.setUser(user);
         role.setAuthority(defaultRole);
         role.setEnabled(enabledUser);
-
         return role;
     }
 
-    private User userEncrypted(User user) {
-        user.setEmail(user.getEmail());
-        user.setName(user.getName());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    private User userEncrypted(UserRegisterDto userDto) {
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setCreated_at(OffsetDateTime.now());
         user.setUpdated_at(OffsetDateTime.now());
-
         return user;
     }
 
