@@ -1,5 +1,6 @@
 package com.api.chatop.service;
 
+import com.api.chatop.dto.RequestMessageDto;
 import com.api.chatop.model.Message;
 import com.api.chatop.model.User;
 import com.api.chatop.repository.*;
@@ -19,12 +20,12 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public void saveMessage(Map<String, Object> dataMessage, User user, Message message) {
-        Integer rental_id = (Integer) dataMessage.get("rental_id");
-        String providedMessage = (String) dataMessage.get("message");
+    private final Message message = new Message();
+
+    public void saveMessage(RequestMessageDto requestMessageDto, User user) {
         message.setUser(user);
-        message.setRental(rentalRepository.findById(rental_id).get());
-        message.setMessage(providedMessage);
+        message.setRental(rentalRepository.findById(requestMessageDto.getRental_id()).get());
+        message.setMessage(requestMessageDto.getMessage());
         message.setCreated_at(OffsetDateTime.now());
         message.setUpdated_at(OffsetDateTime.now());
 

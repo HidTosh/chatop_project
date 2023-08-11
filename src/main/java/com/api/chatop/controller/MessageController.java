@@ -1,5 +1,7 @@
 package com.api.chatop.controller;
 
+import com.api.chatop.dto.RequestMessageDto;
+import com.api.chatop.dto.ResponseMessageRentalDto;
 import com.api.chatop.model.Message;
 import com.api.chatop.model.User;
 import com.api.chatop.service.MessageService;
@@ -22,18 +24,17 @@ public class MessageController {
     @Autowired
     UserService userService;
 
+    private final ResponseMessageRentalDto responseMessageRentalDto = new ResponseMessageRentalDto();
+
     @PostMapping("/messages")
-    public Map<String, String> addMessage(
-            @RequestBody Map<String, Object> dataMessage,
-            Authentication authentication,
-            Message message
+    public ResponseMessageRentalDto addMessage(
+            @RequestBody RequestMessageDto requestMessageDto,
+            Authentication authentication
     ) {
         User user = userService.getUserByEmail(authentication.getName());
-        messageService.saveMessage(dataMessage, user, message);
+        messageService.saveMessage(requestMessageDto, user);
 
-        HashMap<String, String> mapSuccess = new HashMap<>();
-        mapSuccess.put("message",  "Message send with success");
-
-        return mapSuccess;
+        responseMessageRentalDto.setMessage("Message send with success");
+        return responseMessageRentalDto;
     }
 }
