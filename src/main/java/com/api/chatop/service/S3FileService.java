@@ -23,4 +23,9 @@ public class S3FileService {
         amazonS3.putObject(s3BucketName, objectName, objectToUpload);
         return amazonS3.getUrl(s3BucketName, objectName).toString();
     }
+
+    public String deleteObject(String s3BucketName, String objectName) {
+        amazonS3.deleteObject(s3BucketName, objectName);
+        return "Image deleted";
+    }
 }
