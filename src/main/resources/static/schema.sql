@@ -25,16 +25,16 @@ DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
   `id` int NOT NULL AUTO_INCREMENT,
   `message` varchar(2000) DEFAULT NULL,
-  `createdAt` datetime(6) DEFAULT NULL,
-  `updatedAt` datetime(6) DEFAULT NULL,
   `rental_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK3ce1i9w1rtics9wjwj8y5y3md` (`rental_id`),
   KEY `FKpsmh6clh3csorw43eaodlqvkn` (`user_id`),
   CONSTRAINT `FK3ce1i9w1rtics9wjwj8y5y3md` FOREIGN KEY (`rental_id`) REFERENCES `rentals` (`id`),
   CONSTRAINT `FKpsmh6clh3csorw43eaodlqvkn` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,18 +46,18 @@ DROP TABLE IF EXISTS `rentals`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rentals` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) DEFAULT NULL,
   `description` varchar(2000) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
   `picture` varchar(255) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `surface` decimal(10,2) DEFAULT NULL,
-  `createdAt` datetime(6) DEFAULT NULL,
-  `updatedAt` datetime(6) DEFAULT NULL,
+  `price` decimal(12,2) DEFAULT NULL,
+  `surface` decimal(12,2) DEFAULT NULL,
   `owner_id` int NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKf462yhxa9vd3m2qdmcoixg1fv` (`owner_id`),
   CONSTRAINT `FKf462yhxa9vd3m2qdmcoixg1fv` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,12 +70,12 @@ DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
   `id` int NOT NULL AUTO_INCREMENT,
   `authority` varchar(40) DEFAULT NULL,
-  `enabled` tinyint NOT NULL DEFAULT '1',
+  `enabled` int NOT NULL,
   `user_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_rhrcyw5rkf3db7urabnxic6hk` (`user_id`),
+  KEY `FK97mxvrajhkq19dmvboprimeg1` (`user_id`),
   CONSTRAINT `FK97mxvrajhkq19dmvboprimeg1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,11 +90,11 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `createdAt` datetime(6) DEFAULT NULL,
-  `updatedAt` datetime(6) DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_6dotkott2kjsp8vw4d0m25fb7` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -106,4 +106,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-05 12:26:02
+-- Dump completed on 2023-08-12 20:17:49
