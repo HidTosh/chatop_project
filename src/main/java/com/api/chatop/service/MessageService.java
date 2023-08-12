@@ -28,7 +28,6 @@ public class MessageService {
         message.setMessage(requestMessageDto.getMessage());
         message.setCreated_at(OffsetDateTime.now());
         message.setUpdated_at(OffsetDateTime.now());
-
         messageRepository.save(message);
     }
 

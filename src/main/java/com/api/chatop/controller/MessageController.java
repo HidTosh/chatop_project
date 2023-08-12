@@ -26,14 +26,14 @@ public class MessageController {
 
     private final ResponseMessageRentalDto responseMessageRentalDto = new ResponseMessageRentalDto();
 
-    @PostMapping("/messages")
+    /* Create new message */
+    @PostMapping(value = "/messages", produces = { "application/json" })
     public ResponseMessageRentalDto addMessage(
             @RequestBody RequestMessageDto requestMessageDto,
             Authentication authentication
     ) {
         User user = userService.getUserByEmail(authentication.getName());
         messageService.saveMessage(requestMessageDto, user);
-
         responseMessageRentalDto.setMessage("Message send with success");
         return responseMessageRentalDto;
     }

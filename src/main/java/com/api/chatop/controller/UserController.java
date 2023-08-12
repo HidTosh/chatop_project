@@ -1,6 +1,6 @@
 package com.api.chatop.controller;
 
-import com.api.chatop.dto.ReponseJwtDto;
+import com.api.chatop.dto.ResponseJwtDto;
 import com.api.chatop.dto.UserLoginDto;
 import com.api.chatop.dto.UserRegisterDto;
 import com.api.chatop.model.User;
@@ -24,20 +24,20 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    private final ReponseJwtDto responseJwtDto = new ReponseJwtDto();
+    private final ResponseJwtDto responseJwtDto = new ResponseJwtDto();
     public UserController(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
-    /* log user */
-    @PostMapping("/auth/login")
-    public ReponseJwtDto login(@RequestBody UserLoginDto userLoginDto, HttpServletRequest req) {
+    /* login user */
+    @PostMapping(value = "/auth/login", produces = { "application/json" })
+    public ResponseJwtDto login(@RequestBody UserLoginDto userLoginDto, HttpServletRequest req) {
         String token = tokenService.generateToken(
             userService.userAuthentication(
-                    userLoginDto.getEmail(),
-                    userLoginDto.getPassword(),
-                    req,
-                    authenticationManager
+                userLoginDto.getEmail(),
+                userLoginDto.getPassword(),
+                req,
+                authenticationManager
             )
         );
         responseJwtDto.setToken(token);
@@ -45,8 +45,8 @@ public class UserController {
     }
 
     /* Create user account and auto connect */
-    @PostMapping("/auth/register")
-    public ReponseJwtDto register(@RequestBody UserRegisterDto userRegisterDto, HttpServletRequest req) {
+    @PostMapping(value = "/auth/register", produces = { "application/json" })
+    public ResponseJwtDto register(@RequestBody UserRegisterDto userRegisterDto, HttpServletRequest req) {
         if (userService.saveUser(userRegisterDto)) {
             String token = tokenService.generateToken(
                 userService.userAuthentication(
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     /* Get current user (logged) */
-    @RequestMapping(value = "/auth/me", method = RequestMethod.GET)
+    @GetMapping(value = "/auth/me", produces = { "application/json" })
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         try {
             User user = userService.getUserByEmail(authentication.getName());
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     /* Get user by id */
-    @GetMapping("/user/{id}")
+    @GetMapping(value = "/user/{id}", produces = { "application/json" })
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         try {
             User user = userService.getUser(id);
