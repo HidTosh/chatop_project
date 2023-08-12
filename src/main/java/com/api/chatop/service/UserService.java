@@ -33,11 +33,9 @@ public class UserService {
     public String defaultRole = "ROLE_USER"; // Change role from admin
     public int enabledUser = 1; // By default new user is enabled
     public PasswordEncoder passwordEncoder = passwordEncoder();
-    public Role role = new Role();
-
-    public User user = new User();
 
     public boolean saveUser(UserRegisterDto userRegisterDto) {
+        Role role = new Role();
         if (getUserByEmail(userRegisterDto.getEmail()) == null) {
             User newUser = userRepository.save(
                 userEncrypted(userRegisterDto)
@@ -73,6 +71,7 @@ public class UserService {
     }
 
     private User userEncrypted(UserRegisterDto userDto) {
+        User user = new User();
         user.setEmail(userDto.getEmail());
         user.setName(userDto.getName());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));

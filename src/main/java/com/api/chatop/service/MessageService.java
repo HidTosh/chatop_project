@@ -20,9 +20,8 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    private final Message message = new Message();
-
     public void saveMessage(RequestMessageDto requestMessageDto, User user) {
+        Message message = new Message();
         message.setUser(user);
         message.setRental(rentalRepository.findById(requestMessageDto.getRental_id()).get());
         message.setMessage(requestMessageDto.getMessage());
