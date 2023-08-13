@@ -7,14 +7,18 @@ import com.api.chatop.model.User;
 import com.api.chatop.repository.MessageRepository;
 import com.api.chatop.repository.RentalRepository;
 import jakarta.transaction.Transactional;
+import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +36,19 @@ public class RentalService {
 
     @Autowired
     private S3FileService s3FileService;
+
+    @Value("${type.store.file}")
+    @Getter
+    private String typeStoreFile;
+
+    @Value("${folder.apache2.storage}")
+    @Getter
+    private String folderApache2Storage;
+
+    @Value("${localhost.url}")
+    @Getter
+    private String localhostUrl;
+
     private final OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
     /* create or save rental */
@@ -95,37 +112,52 @@ public class RentalService {
 
     /* delete file on S3 */
     private String deleteFile(final String fileName) {
-        s3FileService.deleteObject(s3FileService.getS3BucketName(), fileName);
-        return "Deleted File: " + fileName;
-    }
+        try {
+            if (typeStoreFile.equals("aws-s3")) {
+                s3FileService.deleteObject(s3FileService.getS3BucketName(), fileName);
+            } else if (typeStoreFile.equals("local-apache")) {
+                String filePath = folderApache2Storage + fileName;
+                Files.delete(Paths.get(filePath));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    /* put file on S3 bucket */
-    private File convertMultiPartToFile(MultipartFile file ) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
+        return "Deleted File: " + fileName;
     }
 
     /* upload file to S3 */
     private String getUrlFile(MultipartFile multipartFile) {
         try {
-            File file = convertMultiPartToFile(multipartFile);
-            String fileName = offsetDateTime.toEpochSecond() + file.getName();
-            if (isValideFile(fileName)) {
-                String urlPicture = s3FileService.uploadObject(
-                        s3FileService.getS3BucketName(),
-                        fileName,
-                        file
-                );
-                file.delete();
-                return urlPicture;
+            if (typeStoreFile.equals("aws-s3")) {
+                File file = convertMultiPartToFile(multipartFile, "");
+                String fileName = offsetDateTime.toEpochSecond() + file.getName();
+                if (isValideFile(fileName)) {
+                    String urlPicture = s3FileService.uploadObject(
+                            s3FileService.getS3BucketName(),
+                            fileName,
+                            file
+                    );
+                    file.delete();
+                    return urlPicture;
+                }
+            } else if (typeStoreFile.equals("local-apache")) {
+                File file = convertMultiPartToFile(multipartFile, folderApache2Storage);
+                return localhostUrl + file.getName();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /* put file on S3 bucket */
+    private File convertMultiPartToFile(MultipartFile file, String pathStore) throws IOException {
+        File convFile = new File(pathStore + file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
     }
 
     /* check if valid extension  */

@@ -25,7 +25,7 @@ OR
 - with mysql `mysql -u <user-name-db> -p rental < /PATH TO REPO/chatop_project/src/main/resources/static/schema.sql`
 
 
-5- Create RSA Keys and store them in `/src/main/resources/certs` (You should install openSSL if not installed)
+6 - Create RSA Keys and store them in `/src/main/resources/certs` (You should install openSSL if not installed)
 ```
 # create rsa key pair (private key)
 openssl genrsa -out keypair.pem 2048
@@ -35,9 +35,29 @@ openssl rsa -in keypair.pem -pubout -out public.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
 
 ```
+7 - Chose type storage files, local or cloud aws S3 in app.properties
+```
+#change strategy of storage, user S3 bucket key (aws-s3), user local server apache2 (local-apache)
+type.store.file=local-apache
+```
+- If storage S3 [create public bucket](https://repost.aws/knowledge-center/read-access-objects-s3-bucket) and [create key access](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html) then set in app.properties
+```
+## Default S3 configuration to store file image in public bucket
+access.key.id=AKIASULWSCZ2FNOVF7KJ
+access.key.secret=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
+s3.region.name=eu-west-3
+s3.bucket.name=chatop-rentals
+```
+- If storage local, need to install apache `sudo apt update` and `sudo apt install apache2` then change owner
+of for the default storage folder exp :`sudo chown -R <user>.<user> /var/www/html` after that set in app.properties
+
+```
+folder.apache2.storage=/var/www/html/
+localhost.url=http://localhost/
+```
 
 
-4 - Inside folder project exc  : 
+8 - Inside folder project exc  : 
 
     -  `mvn dependency:tree` # get dependency 
     -  `mvn spring-boot:run` # start project 
