@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MessageRepository  extends JpaRepository<Message, Integer> {
     @Modifying
-    @Query(value = "DELETE FROM rental.messages WHERE rental_id = :rentalId", nativeQuery = true)
+    @Query(value = "DELETE FROM messages WHERE rental_id = :rentalId", nativeQuery = true)
     void deleteByRentalId(Integer rentalId);
 }
